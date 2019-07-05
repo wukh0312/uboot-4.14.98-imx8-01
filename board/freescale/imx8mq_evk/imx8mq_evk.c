@@ -134,9 +134,9 @@ static int setup_fec(void)
 	setup_iomux_fec();
 
 	/* Use 125M anatop REF_CLK1 for ENET1, not from external */
-	clrsetbits_le32(IOMUXC_GPR1,
-	BIT(13) | BIT(17), 0);
-	return set_clk_enet(ENET_125MHz);
+	clrsetbits_le32(&iomuxc_gpr_regs->gpr[1],
+			IOMUXC_GPR_GPR1_GPR_ENET1_TX_CLK_SEL_SHIFT, 0);
+	return set_clk_enet(ENET_125MHZ);
 	#else
 
 	/*yaonz 20181210  added for yuanji*/
@@ -151,8 +151,8 @@ static int setup_fec(void)
 
 	printf("Yao-log: #####%s,%d#####!!!\n",__FUNCTION__, __LINE__);
 
-	setbits_le32(IOMUXC_GPR1, BIT(13)); /* Use internal clock from CCM */
-	return set_clk_enet(ENET_50MHz);
+	setbits_le32(&iomuxc_gpr_regs->gpr[1], BIT(13)); /* Use internal clock from CCM */
+	return set_clk_enet(ENET_50MHZ);
 	#endif 
 }
 
