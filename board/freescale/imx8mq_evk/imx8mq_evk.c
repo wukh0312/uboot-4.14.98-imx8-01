@@ -130,12 +130,30 @@ static int setup_fec(void)
 	struct iomuxc_gpr_base_regs *const iomuxc_gpr_regs
 		= (struct iomuxc_gpr_base_regs *) IOMUXC_GPR_BASE_ADDR;
 
+	#if 0 /*20181210 added for imx8mq_evk */
 	setup_iomux_fec();
 
 	/* Use 125M anatop REF_CLK1 for ENET1, not from external */
-	clrsetbits_le32(&iomuxc_gpr_regs->gpr[1],
-			IOMUXC_GPR_GPR1_GPR_ENET1_TX_CLK_SEL_SHIFT, 0);
-	return set_clk_enet(ENET_125MHZ);
+	clrsetbits_le32(IOMUXC_GPR1,
+	BIT(13) | BIT(17), 0);
+	return set_clk_enet(ENET_125MHz);
+	#else
+
+	/*yaonz 20181210  added for yuanji*/
+
+	/*
+	* GPR1 bit 13:
+	* 1:enet1 rmii clock comes from ccm->pad->loopback, SION bit for the pad (iomuxc_sw_input_on_pad_enet_td2) should be set also;
+	* 0:enet1 rmii clock comes from external phy or osc
+	*/
+
+	/* Use 50M anatop REF_CLK1 for ENET1, not from external. yaonz 20181210  for yuanji*/
+
+	printf("Yao-log: #####%s,%d#####!!!\n",__FUNCTION__, __LINE__);
+
+	setbits_le32(IOMUXC_GPR1, BIT(13)); /* Use internal clock from CCM */
+	return set_clk_enet(ENET_50MHz);
+	#endif 
 }
 
 
