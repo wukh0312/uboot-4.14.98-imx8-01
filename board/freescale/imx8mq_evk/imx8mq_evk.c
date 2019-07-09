@@ -39,6 +39,9 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define WDOG_PAD_CTRL	(PAD_CTL_DSE6 | PAD_CTL_HYS | PAD_CTL_PUE)
 
+#define IOMUXC_GPR_GPR1_GPR_ENET1_TX_CLK_SEL_MASK 0x2000u
+#define IOMUXC_GPR_GPR1_GPR_ENET1_TX_CLK_SEL_SHIFT 13
+
 static iomux_v3_cfg_t const wdog_pads[] = {
 	IMX8MQ_PAD_GPIO1_IO02__WDOG1_WDOG_B | MUX_PAD_CTRL(WDOG_PAD_CTRL),
 };
@@ -151,7 +154,7 @@ static int setup_fec(void)
 
 	printf("Yao-log: #####%s,%d#####!!!\n",__FUNCTION__, __LINE__);
 
-	setbits_le32(&iomuxc_gpr_regs->gpr[1], BIT(13)); /* Use internal clock from CCM */
+	setbits_le32(&iomuxc_gpr_regs->gpr[1], IOMUXC_GPR_GPR1_GPR_ENET1_TX_CLK_SEL_MASK); /* Use internal clock from CCM */
 	return set_clk_enet(ENET_50MHZ);
 	#endif 
 }
